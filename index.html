@@ -4,21 +4,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Хоризонтална Галерия</title>
-
-    <!-- Мета тагове за споделяне -->
-    <meta name="description" content="Интерактивна хоризонтална галерия с динамично зареждане.">
-    <meta property="og:title" content="Хоризонтална Галерия">
-    <meta property="og:description" content="Разгледайте галерията с автоскрол и аудио съпровод.">
-    <meta property="og:image" content="img/0.webp">
-    <meta property="og:type" content="website">
+    <title>СВИРИ ХАРМОНИКО</title>
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <meta name="description" content="ИЗЛОЖБА ДАР ЗА РОДИНАТА">
+    <meta property="og:title" content="СВИРИ ХАРМОНИКО">
+    <meta property="og:description" content="ИЗЛОЖБА ДАР ЗА РОДИНАТА">
+    <meta property="og:image" content="https://sviriharmoniko.com/img/sviriharmoniko2.webp"">
+    <meta property=" og:type" content="website">
     <meta property="og:locale" content="bg_BG">
 
-    <!-- Twitter Card тагове -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Хоризонтална Галерия">
-    <meta name="twitter:description" content="Разгледайте галерията с автоскрол и аудио съпровод.">
-    <meta name="twitter:image" content="img/0.webp">
+    <meta name="twitter:title" content="СВИРИ ХАРМОНИКО">
+    <meta name="twitter:description" content="ИЗЛОЖБА ДАР ЗА РОДИНАТА">
+    <meta name="twitter:image" content="https://sviriharmoniko.com/img/sviriharmoniko2.webp">
 
     <style>
         * {
@@ -34,7 +32,6 @@
             color: #ffffff;
         }
 
-        /* Фиксиран панел вляво за допълнителните бутони */
         .left-sidebar {
             position: fixed;
             left: 20px;
@@ -64,7 +61,6 @@
             transform: translateY(-2px);
         }
 
-        /* Контейнер за хоризонталната галерия */
         .gallery-container {
             display: flex;
             flex-direction: row;
@@ -80,7 +76,6 @@
             -webkit-overflow-scrolling: touch;
         }
 
-        /* Изображения с фиксирана височина 1080px */
         .gallery-item {
             height: 720px;
             width: auto;
@@ -89,7 +84,6 @@
             display: block;
         }
 
-        /* Блок с контролни бутони между картинките */
         .controls-block {
             display: flex;
             flex-direction: column;
@@ -100,7 +94,6 @@
             padding: 0 10px;
         }
 
-        /* Бутони за скрол и музика */
         .btn {
             background-color: rgba(255, 255, 255, 0.12);
             border: 1px solid rgba(255, 255, 255, 0.3);
@@ -124,7 +117,6 @@
             border-color: #ffffff;
         }
 
-        /* Модални прозорци */
         .modal {
             display: none;
             position: fixed;
@@ -143,12 +135,33 @@
             background: #1a1a1a;
             padding: 30px;
             border-radius: 12px;
-            max-width: 550px;
+            min-width: 200px;
+            max-width: 900px;
             width: 90%;
             color: #ffffff;
             position: relative;
             border: 1px solid rgba(255, 255, 255, 0.2);
             line-height: 1.6;
+            text-align: center;
+        }
+
+        .modal-gallery {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            justify-content: space-between;
+        }
+
+        .modal-gallery img {
+            width: calc(33.333% - 8px);
+            height: auto;
+            border-radius: 6px;
+            object-fit: cover;
+            display: block;
+        }
+
+        #tech-modal .modal-content {
+            max-width: 300px;
         }
 
         .close-btn {
@@ -164,7 +177,6 @@
             color: #ffffff;
         }
 
-        /* Скролбар стилизация */
         .gallery-container::-webkit-scrollbar {
             height: 12px;
         }
@@ -186,42 +198,44 @@
 
 <body>
 
-    <!-- Фонова музика -->
     <audio id="audio-player" loop src="sviriharmoniko2.mp3"></audio>
 
-    <!-- Основен галеен контейнер -->
     <main class="gallery-container" id="gallery">
-        <!-- Блок с бутони преди първата картина -->
         <div class="controls-block">
             <button class="btn" onclick="openModal('info-modal')">ℹ</button>
-            <button class="btn" onclick="openModal('tech-modal')">❔</button>
+            <button class="btn" onclick="openModal('tech-modal')">🎨</button>
         </div>
-        <!-- Само първото изображение се зарежда първоначално -->
         <img class="gallery-item" id="img-0" src="img/0.webp" alt="Изображение 0">
 
         <div class="controls-block">
             <button class="btn scroll-btn" onclick="toggleAutoScroll()" title="Автоматичен изглед">▶▶</button>
-            <button class="btn music-btn" onclick="toggleMusic()" title="Пусни / Спри музика">🎵</button>
+            <button class="btn music-btn" onclick="toggleMusic()" title="Пусни / Спри музика">📻</button>
         </div>
     </main>
 
-    <!-- Модален прозорец: Информация -->
     <div class="modal" id="info-modal">
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal('info-modal')">&times;</span>
-            <h2>Информация</h2>
-            <p>Добре дошли в интерактивната хоризонтална галерия. Използвайте бутоните за автоматично превъртане или
-                скролирайте ръчно, за да разгледате пълната колекция.</p>
+            <div class="modal-gallery">
+                <img src="img/pokana-back.png">
+                <img src="img/pokana-front.png">
+                <img src="img/pokana-inside.png">
+            </div>
         </div>
     </div>
 
-    <!-- Модален прозорец: Технически инструкции -->
     <div class="modal" id="tech-modal">
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal('tech-modal')">&times;</span>
-            <h2>Технически инструкции</h2>
-            <p>Галерията използва лениво зареждане (Lazy Loading). Оставите елементи от img/1.webp до img/10.webp се
-                зареждат в DOM дървото динамично при задействане на скрол.</p>
+            <h1>🎨</h1>
+            <p>Фондация „Познание“</p>
+            <p><a href="https://kitkazdravets.eu" target="_blank">Фондация „Китка <i>Здравец</i>“</a></p>
+            <p><a href="https://mashworks.eu" target="_blank">MASHWORKS</a></p>
+            <p>&nbsp;</p>
+            <h1>➕</h1>
+            <p>За по-детайлен преглед на изображенията можете да увеличите мащаба на целия браузър. Задръжте клавиша
+                Ctrl (за Mac: Cmd) и натиснете + за увеличение или - за намаление. За да се върнете към първоначалния
+                размер от 100%, натиснете Ctrl + 0.</p>
         </div>
     </div>
 
@@ -234,14 +248,12 @@
         let isGalleryLoaded = false;
         let initialScrollPos = 0;
 
-        // Останалите картинки за динамично зареждане (от 1.webp до 10.webp)
         const remainingImages = [
             'img/1.webp', 'img/2.webp', 'img/3.webp', 'img/4.webp', 'img/5.webp',
             'img/6.webp', 'img/7.webp', 'img/8.webp', 'img/9.webp', 'img/10.webp',
             'img/brigadiri-poster.png'
         ];
 
-        // Центриране на 1-вата картина при зареждане
         function centerFirstImage() {
             const firstImg = document.getElementById('img-0');
             if (firstImg) {
@@ -254,13 +266,11 @@
             }
         }
 
-        // Динамично зареждане на останалите картинки при скрол
         function loadRemainingGallery() {
             if (isGalleryLoaded) return;
             isGalleryLoaded = true;
 
             remainingImages.forEach((src, index) => {
-                // Създаване на контролен блок
                 const controls = document.createElement('div');
                 controls.className = 'controls-block';
                 if (index != 0) {
@@ -270,8 +280,6 @@
                 `;
                 }
 
-
-                // Създаване на новото изображение
                 const img = document.createElement('img');
                 img.className = 'gallery-item';
                 img.src = src;
@@ -282,19 +290,16 @@
             });
         }
 
-        // Слушател за ръчен скрол
         gallery.addEventListener('scroll', () => {
             if (!isGalleryLoaded && Math.abs(gallery.scrollLeft - initialScrollPos) > 10) {
                 loadRemainingGallery();
             }
         });
 
-        // Центриране при пълно зареждане
         window.addEventListener('load', centerFirstImage);
 
-        // Управление на автоскрол
         function toggleAutoScroll() {
-            loadRemainingGallery(); // Гарантираме зареждане на картинките при старт
+            loadRemainingGallery();
 
             if (isScrolling) {
                 stopAutoScroll();
@@ -308,13 +313,26 @@
             updateScrollButtons('⏸');
 
             function step() {
+                const items = document.querySelectorAll('.gallery-item');
+                const lastImg = items[items.length - 1];
+
+                if (lastImg) {
+                    const targetScrollLeft = lastImg.offsetLeft - (gallery.clientWidth / 2) + (lastImg.clientWidth / 2);
+
+                    if (gallery.scrollLeft >= targetScrollLeft) {
+                        gallery.scrollLeft = targetScrollLeft;
+                        stopAutoScroll();
+                        return;
+                    }
+                }
+
                 gallery.scrollLeft += 1;
-                if (gallery.scrollLeft + gallery.clientWidth >= gallery.scrollWidth - 2) {
-                    stopAutoScroll();
-                } else if (isScrolling) {
+
+                if (isScrolling) {
                     scrollAnimationId = requestAnimationFrame(step);
                 }
             }
+
             scrollAnimationId = requestAnimationFrame(step);
         }
 
@@ -330,14 +348,13 @@
             });
         }
 
-        // Управление на музика
         function toggleMusic() {
             if (audio.paused) {
                 audio.play();
                 updateMusicButtons('🔊');
             } else {
                 audio.pause();
-                updateMusicButtons('🎵');
+                updateMusicButtons('📻');
             }
         }
 
@@ -347,7 +364,6 @@
             });
         }
 
-        // Управление на модални прозорци
         function openModal(id) {
             document.getElementById(id).style.display = 'flex';
         }
