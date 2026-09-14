@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="bg">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Хоризонтална Галерия</title>
+
+    <!-- Мета тагове за споделяне -->
+    <meta name="description" content="Интерактивна хоризонтална галерия с динамично зареждане.">
+    <meta property="og:title" content="Хоризонтална Галерия">
+    <meta property="og:description" content="Разгледайте галерията с автоскрол и аудио съпровод.">
+    <meta property="og:image" content="img/0.webp">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="bg_BG">
+
+    <!-- Twitter Card тагове -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Хоризонтална Галерия">
+    <meta name="twitter:description" content="Разгледайте галерията с автоскрол и аудио съпровод.">
+    <meta name="twitter:image" content="img/0.webp">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #0d0d0d;
+            font-family: Arial, sans-serif;
+            overflow-y: hidden;
+            color: #ffffff;
+        }
+
+        /* Фиксиран панел вляво за допълнителните бутони */
+        .left-sidebar {
+            position: fixed;
+            left: 20px;
+            top: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .sidebar-btn {
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #ffffff;
+            padding: 10px 18px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            backdrop-filter: blur(8px);
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .sidebar-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: #ffffff;
+            transform: translateY(-2px);
+        }
+
+        /* Контейнер за хоризонталната галерия */
+        .gallery-container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 25px;
+            padding-left: 50vw;
+            padding-right: 50vw;
+            padding-top: 20px;
+            padding-bottom: 20px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            min-height: 100vh;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Изображения с фиксирана височина 1080px */
+        .gallery-item {
+            height: 720px;
+            width: auto;
+            flex-shrink: 0;
+            border-radius: 8px;
+            display: block;
+        }
+
+        /* Блок с контролни бутони между картинките */
+        .controls-block {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+            padding: 0 10px;
+        }
+
+        /* Бутони за скрол и музика */
+        .btn {
+            background-color: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #ffffff;
+            font-size: 22px;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.2s ease-in-out;
+            user-select: none;
+            backdrop-filter: blur(4px);
+        }
+
+        .btn:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+            border-color: #ffffff;
+        }
+
+        /* Модални прозорци */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: #1a1a1a;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 550px;
+            width: 90%;
+            color: #ffffff;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            line-height: 1.6;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #aaa;
+        }
+
+        .close-btn:hover {
+            color: #ffffff;
+        }
+
+        /* Скролбар стилизация */
+        .gallery-container::-webkit-scrollbar {
+            height: 12px;
+        }
+
+        .gallery-container::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        .gallery-container::-webkit-scrollbar-thumb {
+            background: #444;
+            border-radius: 6px;
+        }
+
+        .gallery-container::-webkit-scrollbar-thumb:hover {
+            background: #666;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Фонова музика -->
+    <audio id="audio-player" loop src="sviriharmoniko2.mp3"></audio>
+
+    <!-- Основен галеен контейнер -->
+    <main class="gallery-container" id="gallery">
+        <!-- Блок с бутони преди първата картина -->
+        <div class="controls-block">
+            <button class="btn" onclick="openModal('info-modal')">ℹ</button>
+            <button class="btn" onclick="openModal('tech-modal')">❔</button>
+        </div>
+        <!-- Само първото изображение се зарежда първоначално -->
+        <img class="gallery-item" id="img-0" src="img/0.webp" alt="Изображение 0">
+
+        <div class="controls-block">
+            <button class="btn scroll-btn" onclick="toggleAutoScroll()" title="Автоматичен изглед">▶▶</button>
+            <button class="btn music-btn" onclick="toggleMusic()" title="Пусни / Спри музика">🎵</button>
+        </div>
+    </main>
+
+    <!-- Модален прозорец: Информация -->
+    <div class="modal" id="info-modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('info-modal')">&times;</span>
+            <h2>Информация</h2>
+            <p>Добре дошли в интерактивната хоризонтална галерия. Използвайте бутоните за автоматично превъртане или
+                скролирайте ръчно, за да разгледате пълната колекция.</p>
+        </div>
+    </div>
+
+    <!-- Модален прозорец: Технически инструкции -->
+    <div class="modal" id="tech-modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('tech-modal')">&times;</span>
+            <h2>Технически инструкции</h2>
+            <p>Галерията използва лениво зареждане (Lazy Loading). Оставите елементи от img/1.webp до img/10.webp се
+                зареждат в DOM дървото динамично при задействане на скрол.</p>
+        </div>
+    </div>
+
+    <script>
+        const gallery = document.getElementById('gallery');
+        const audio = document.getElementById('audio-player');
+
+        let isScrolling = false;
+        let scrollAnimationId = null;
+        let isGalleryLoaded = false;
+        let initialScrollPos = 0;
+
+        // Останалите картинки за динамично зареждане (от 1.webp до 10.webp)
+        const remainingImages = [
+            'img/1.webp', 'img/2.webp', 'img/3.webp', 'img/4.webp', 'img/5.webp',
+            'img/6.webp', 'img/7.webp', 'img/8.webp', 'img/9.webp', 'img/10.webp',
+            'img/brigadiri-poster.png'
+        ];
+
+        // Центриране на 1-вата картина при зареждане
+        function centerFirstImage() {
+            const firstImg = document.getElementById('img-0');
+            if (firstImg) {
+                const imgOffset = firstImg.offsetLeft;
+                const imgWidth = firstImg.clientWidth;
+                const containerWidth = gallery.clientWidth;
+
+                initialScrollPos = imgOffset - (containerWidth / 2) + (imgWidth / 2);
+                gallery.scrollLeft = initialScrollPos;
+            }
+        }
+
+        // Динамично зареждане на останалите картинки при скрол
+        function loadRemainingGallery() {
+            if (isGalleryLoaded) return;
+            isGalleryLoaded = true;
+
+            remainingImages.forEach((src, index) => {
+                // Създаване на контролен блок
+                const controls = document.createElement('div');
+                controls.className = 'controls-block';
+                if (index != 0) {
+                    controls.innerHTML = `
+                    <button class="btn scroll-btn" onclick="toggleAutoScroll()" title="Автоматичен изглед">${isScrolling ? '⏸' : '▶▶'}</button>
+                    <button class="btn music-btn" onclick="toggleMusic()" title="Пусни / Спри музика">${audio.paused ? '🎵' : '🔊'}</button>
+                `;
+                }
+
+
+                // Създаване на новото изображение
+                const img = document.createElement('img');
+                img.className = 'gallery-item';
+                img.src = src;
+                img.alt = `Изображение ${index + 1}`;
+
+                gallery.appendChild(controls);
+                gallery.appendChild(img);
+            });
+        }
+
+        // Слушател за ръчен скрол
+        gallery.addEventListener('scroll', () => {
+            if (!isGalleryLoaded && Math.abs(gallery.scrollLeft - initialScrollPos) > 10) {
+                loadRemainingGallery();
+            }
+        });
+
+        // Центриране при пълно зареждане
+        window.addEventListener('load', centerFirstImage);
+
+        // Управление на автоскрол
+        function toggleAutoScroll() {
+            loadRemainingGallery(); // Гарантираме зареждане на картинките при старт
+
+            if (isScrolling) {
+                stopAutoScroll();
+            } else {
+                startAutoScroll();
+            }
+        }
+
+        function startAutoScroll() {
+            isScrolling = true;
+            updateScrollButtons('⏸');
+
+            function step() {
+                gallery.scrollLeft += 1;
+                if (gallery.scrollLeft + gallery.clientWidth >= gallery.scrollWidth - 2) {
+                    stopAutoScroll();
+                } else if (isScrolling) {
+                    scrollAnimationId = requestAnimationFrame(step);
+                }
+            }
+            scrollAnimationId = requestAnimationFrame(step);
+        }
+
+        function stopAutoScroll() {
+            isScrolling = false;
+            cancelAnimationFrame(scrollAnimationId);
+            updateScrollButtons('▶▶');
+        }
+
+        function updateScrollButtons(iconText) {
+            document.querySelectorAll('.scroll-btn').forEach(btn => {
+                btn.textContent = iconText;
+            });
+        }
+
+        // Управление на музика
+        function toggleMusic() {
+            if (audio.paused) {
+                audio.play();
+                updateMusicButtons('🔊');
+            } else {
+                audio.pause();
+                updateMusicButtons('🎵');
+            }
+        }
+
+        function updateMusicButtons(iconText) {
+            document.querySelectorAll('.music-btn').forEach(btn => {
+                btn.textContent = iconText;
+            });
+        }
+
+        // Управление на модални прозорци
+        function openModal(id) {
+            document.getElementById(id).style.display = 'flex';
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+    </script>
+
+</body>
+
+</html>
