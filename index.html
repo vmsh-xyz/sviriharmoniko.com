@@ -244,7 +244,7 @@
             <button class="btn" onclick="openModal('info-modal')">ℹ</button>
             <button class="btn" onclick="openModal('tech-modal')">🎨</button>
         </div>
-        <img class="gallery-item" id="img-0" src="img/0.webp" alt="Изображение 0">
+        <img class="gallery-item" id="img-0" src="img/0.webp">
 
         <div class="controls-block">
             <button class="btn scroll-btn" onclick="toggleAutoScroll()" title="Автоматичен изглед">▶▶</button>
@@ -271,7 +271,7 @@
             <p><a href="https://kitkazdravets.eu" target="_blank">Фондация „Китка <i>Здравец</i>“</a></p>
             <p><a href="https://mashworks.eu" target="_blank">MASHWORKS</a></p>
             <p>&nbsp;</p>
-            <h1>➕</h1>
+            <h1>➕ ➖</h1>
             <p>За по-детайлен преглед на изображенията можете да увеличите мащаба на целия браузър. Задръжте клавиша
                 Ctrl (за Mac: Cmd) и натиснете + за увеличение или - за намаление. За да се върнете към първоначалния
                 размер от 100%, натиснете Ctrl + 0.</p>
@@ -326,6 +326,13 @@
 
                 gallery.appendChild(controls);
                 gallery.appendChild(img);
+
+                const endControls = document.createElement('div');
+                endControls.className = 'controls-block';
+                endControls.innerHTML = `
+        <button class="btn start-btn" onclick="scrollToStart()" title="Връщане в началото">⏮</button>
+    `;
+                gallery.appendChild(endControls);
             });
         }
 
@@ -409,6 +416,21 @@
 
         function closeModal(id) {
             document.getElementById(id).style.display = 'none';
+        }
+
+
+        function scrollToStart() {
+            stopAutoScroll();
+
+            const firstImg = document.getElementById('img-0');
+            if (firstImg) {
+                const imgOffset = firstImg.offsetLeft;
+                const imgWidth = firstImg.clientWidth;
+                const containerWidth = gallery.clientWidth;
+                const targetPos = imgOffset - (containerWidth / 2) + (imgWidth / 2);
+
+                gallery.scrollLeft = targetPos;
+            }
         }
     </script>
 
