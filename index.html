@@ -310,6 +310,7 @@
             isGalleryLoaded = true;
 
             remainingImages.forEach((src, index) => {
+                console.log(index);
                 const controls = document.createElement('div');
                 controls.className = 'controls-block';
                 if (index != 0) {
@@ -327,12 +328,16 @@
                 gallery.appendChild(controls);
                 gallery.appendChild(img);
 
-                const endControls = document.createElement('div');
-                endControls.className = 'controls-block';
-                endControls.innerHTML = `
+                if (index == remainingImages.length - 1) {
+                    console.log(remainingImages.length);
+                    const endControls = document.createElement('div');
+                    endControls.className = 'controls-block';
+                    endControls.innerHTML = `
         <button class="btn start-btn" onclick="scrollToStart()" title="Връщане в началото">⏮</button>
     `;
-                gallery.appendChild(endControls);
+                    gallery.appendChild(endControls);
+                }
+
             });
         }
 
